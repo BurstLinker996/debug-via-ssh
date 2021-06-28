@@ -106,23 +106,22 @@ runs:
     - name: Start ngrok
       run: |
         printf "# Starting ngrok..."
-          ./ngrok tcp 22 --log ".ngrok.log" --region "${{ inputs.NGROK_REGION }}" &
-        printf " [DONE]\n\n"
+        ssh_host=$(curl -s --header "Content-Type: application/json" \
+        --request POST \
+        --data '{"addr":"22","proto":"tcp","name":"ssh"}' \
+        http://localhost:4040/api/tunnels|jq .public_url)
 
-        printf "# Waiting for '.ngrok.log' file to be properly generated..."
-          while ! grep -osqE "tcp://(.+)" .ngrok.log;do
-            sleep 1
-            if grep -sq "command failed" .ngrok.log
-            then
-              exit 1
-            fi
-          done
-        printf " [DONE]\n\n"
+        echo $ssh_host
 
-        ssh_string=$(grep -oE "tcp://(.+)" .ngrok.log | sed "s/tcp:\/\//ssh $(cat ssh_user)@/" | sed "s/:/ -p /")
+        ssh_string=$(echo $ssh_host| sed "s/tcp:\/\//ssh $(cat ssh_user)@/" | sed "s/:/ -p /")
         continue_path=$(eval echo ~$(cat ssh_user)/continue)
         time=${{ inputs.NGROK_TIMEOUT }}
         
+        while [ $(lsof -i:8080|wc -l) = "0" ]
+        do
+          echo "漫画解析工具启动中"
+          sleep 3
+        done
         
         web=$(curl -s --header "Content-Type: application/json" \
         --request POST \
@@ -137,7 +136,7 @@ runs:
           echo "#########################################"
           echo $ssh_string
           echo "#########################################"
-          echo "# 漫画阅读器访问地址"
+          echo "# 漫画解析工具访问地址"
           echo "#########################################"
           echo $web
           echo "#########################################"
