@@ -106,9 +106,14 @@ runs:
     - name: Start ngrok
       run: |
         echo "启动ngrok"
-        ./ngrok start --none
+        nohup ./ngrok start --none &
+        while [ $(lsof -i:4040|wc -l) = "0" ]
+        do
+          echo "启动ngrok"
+          sleep 1
+        while
         echo "启动完成"
-        curl localhost:4040
+  
         ssh_host=$(curl -s --header "Content-Type: application/json" \
         --request POST \
         --data '{"addr":"22","proto":"tcp","name":"ssh"}' \
