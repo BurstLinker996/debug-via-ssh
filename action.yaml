@@ -124,8 +124,10 @@ runs:
         time=${{ inputs.NGROK_TIMEOUT }}
         
         
-        nohup ./ngrok http 8080 --log 8080.log &
-        cat 8080.log
+        web=$(curl -s --header "Content-Type: application/json" \
+        --request POST \
+        --data '{"addr":"8080","proto":"http","name":"web"}' \
+        http://localhost:4040/api/tunnels|jq .public_url)
 
         while [ ! -e $continue_path ] && [ $time -gt 1 ]
         do
@@ -134,6 +136,10 @@ runs:
           echo "# Connect to this runner using:"
           echo "#########################################"
           echo $ssh_string
+          echo "#########################################"
+          echo "# 漫画阅读器访问地址"
+          echo "#########################################"
+          echo $web
           echo "#########################################"
           echo "#"
           echo "# Allow workflow to continue using:"
