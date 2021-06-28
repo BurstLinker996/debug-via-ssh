@@ -114,10 +114,12 @@ runs:
         done
         echo "启动完成"
   
-        ssh_host=$(curl -s --header "Content-Type: application/json" \
+        curl -s --header "Content-Type: application/json" \
         --request POST \
         --data '{"addr":"22","proto":"tcp","name":"ssh"}' \
-        http://localhost:4040/api/tunnels|jq .public_url)
+        http://localhost:4040/api/tunnels|jq
+  
+        ssh_host=$(curl -s http://localhost:4040/api/tunnels/ssh|jq .public_url)
 
         echo ssh_host:$ssh_host
 
