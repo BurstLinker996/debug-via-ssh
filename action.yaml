@@ -106,7 +106,7 @@ runs:
     - name: Start ngrok
       run: |
         printf "# Starting ngrok..."
-        ngrok start --none
+        ./ngrok start --none
         ssh_host=$(curl -s --header "Content-Type: application/json" \
         --request POST \
         --data '{"addr":"22","proto":"tcp","name":"ssh"}' \
