@@ -107,19 +107,13 @@ runs:
       run: |
         nohup ./ngrok start --none &
         echo "启动ngrok"
-        while [ $(lsof -i:4040|wc -l) = "0" ]
-        do
-          sleep 1
-          echo "启动ngrok"
-        done
-        echo "启动完成"
-  
-        curl -s --header "Content-Type: application/json" \
+        sleep 5
+        
+        
+        ssh_host=$(curl -s --header "Content-Type: application/json" \
         --request POST \
         --data '{"addr":"22","proto":"tcp","name":"ssh"}' \
-        http://localhost:4040/api/tunnels|jq
-  
-        ssh_host=$(curl -s http://localhost:4040/api/tunnels/ssh|jq .public_url)
+        http://localhost:4040/api/tunnels|jq .public_url)
 
         echo ssh_host:$ssh_host
 
@@ -130,7 +124,7 @@ runs:
         while [ $(lsof -i:8080|wc -l) = "0" ]
         do
           echo "漫画解析工具启动中"
-          sleep 3
+          sleep 10
         done
         
         web=$(curl -s --header "Content-Type: application/json" \
