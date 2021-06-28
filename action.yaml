@@ -105,13 +105,13 @@ runs:
 
     - name: Start ngrok
       run: |
-        echo "启动ngrok"
         nohup ./ngrok start --none &
+        echo "启动ngrok"
         while [ $(lsof -i:4040|wc -l) = "0" ]
         do
           echo "启动ngrok"
           sleep 1
-        while
+        done
         echo "启动完成"
   
         ssh_host=$(curl -s --header "Content-Type: application/json" \
