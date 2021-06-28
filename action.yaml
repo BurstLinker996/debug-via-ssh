@@ -109,8 +109,8 @@ runs:
         echo "启动ngrok"
         while [ $(lsof -i:4040|wc -l) = "0" ]
         do
-          echo "启动ngrok"
           sleep 1
+          echo "启动ngrok"
         done
         echo "启动完成"
   
